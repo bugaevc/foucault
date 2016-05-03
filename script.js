@@ -40,16 +40,23 @@ canvas.width = canvas.parentNode.clientWidth;
 canvas.height = canvas.parentNode.clientHeight;
 var ctx = canvas.getContext("2d");
 
-var t = 0.0;
 ctx.translate(500, 250);
-ctx.strokeStyle = "rgba(100,100,100,0.5)";
 ctx.lineWidth = 0.1;
+
+// set up the simulation data
+var t = 0.0;
+var lattitude = document.querySelector("#lattitude").value;
+document.querySelector("#lattitude").addEventListener("input", function () {
+	lattitude = this.value;
+	if (earthMesh != null)
+		earthMesh.rotation.x = math.unit(lattitude - 90, 'deg').toNumber('rad');
+});
+
 function render() {
 	requestAnimationFrame(render);
-	if (earthMesh != null)
-		earthMesh.rotateX(0.001);
 	renderer.render(scene, camera);
-	var p = calc(t, 200, 200, math.pi / 4, 10, 0.1);
+	var p = calc(t, 200, 200, math.unit(lattitude, 'deg'), 10, 0.1);
+	ctx.strokeStyle = timeToColor(Math.ceil(t));
 	ctx.lineTo(p.re, p.im);
 	ctx.stroke();
 	t += 0.01;
@@ -76,4 +83,8 @@ function calc(t, c1, c2, phi, w, om) {
 	return math.multiply(k,
 		math.add(f(c1, w), f(c2, -w))
 	);
+}
+
+function timeToColor(t) {
+	return "rgb(" + t*10 + ", 0, 0)";
 }
