@@ -1,9 +1,16 @@
+// find DOM objects
+var earthContainer = document.querySelector("#earth-container");
+var w = earthContainer.clientWidth, h = earthContainer.clientHeight;
+var canvas = document.querySelector(".graph canvas");
+
+// set up the 3D scene
+
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+var camera = new THREE.PerspectiveCamera(75,  w/h , 0.1, 1000);
 
 var renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+renderer.setSize(w, h);
+earthContainer.appendChild(renderer.domElement);
 
 var light = new THREE.PointLight(0xffffff, 1, 0);
 light.position.set(5, 5, 5);
@@ -12,7 +19,9 @@ scene.add(light);
 light = new THREE.AmbientLight(0x606060); // soft white light
 scene.add(light);
 
-var geometry = new THREE.SphereGeometry(2, 32, 32);
+var geometry = new THREE.SphereGeometry(2.75, 64, 64);
+
+// load the Earth texture
 
 var earthMesh = null;
 var textureUrl = "//raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/land_ocean_ice_cloud_2048.jpg";
@@ -26,10 +35,45 @@ loader.load(textureUrl, function (texture) {
 
 camera.position.z = 5;
 
+// set up the canvas
+canvas.width = canvas.parentNode.clientWidth;
+canvas.height = canvas.parentNode.clientHeight;
+var ctx = canvas.getContext("2d");
+
+var t = 0.0;
+ctx.translate(500, 250);
+ctx.strokeStyle = "rgba(100,100,100,0.5)";
+ctx.lineWidth = 0.1;
 function render() {
 	requestAnimationFrame(render);
 	if (earthMesh != null)
 		earthMesh.rotateX(0.001);
 	renderer.render(scene, camera);
+	var p = calc(t, 200, 200, math.pi / 4, 10, 0.1);
+	ctx.lineTo(p.re, p.im);
+	ctx.stroke();
+	t += 0.01;
 }
 render();
+
+function calc(t, c1, c2, phi, w, om) {
+	// https://www.wikiwand.com/en/Foucault_pendulum#/Precession_as_a_form_of_parallel_transport
+	// at the end of the section
+	var k = math.chain(math.i)
+		.multiply(-om)
+		.multiply(math.sin(phi))
+		.multiply(t)
+		.exp()
+		.done();
+	function f(c, w) {
+		return math.chain(math.i)
+			.multiply(w)
+			.multiply(t)
+			.exp()
+			.multiply(c)
+			.done();
+	}
+	return math.multiply(k,
+		math.add(f(c1, w), f(c2, -w))
+	);
+}

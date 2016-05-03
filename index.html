@@ -7,8 +7,22 @@
 		<link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
+		<div id="earth-container"></div>
+		<div class="controls-container">
+			<div class="graph">
+				<canvas>
+					Click <a href="http://whatbrowser.org">here</a> if you want
+					to know why this page does not work:
+				</canvas>
+			</div>
+			<div class="controls">
+				<label for="lattitude">Lattitude:</label>
+				<input type="range" name="lattitude" min="-90" max="90" value="45"/>
+			</div>
+		</div>
         <!-- TODO: change to the min version once ready -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r76/three.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
 		<script src="script.js"></script>
 	</body>
 </html>
