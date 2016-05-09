@@ -2,20 +2,28 @@
 var earthContainer = document.querySelector("#earth-container");
 var w = earthContainer.clientWidth, h = earthContainer.clientHeight;
 var canvas = document.querySelector(".graph canvas");
+var lattitudeEl = document.querySelector("#lattitude");
+var c1El = document.querySelector("#c1");
+var c2El = document.querySelector("#c2");
 
 // set up the 3D scene
 
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75,  w/h , 0.1, 1000);
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(w, h);
 earthContainer.appendChild(renderer.domElement);
 
+var camera = new THREE.PerspectiveCamera(75,  w/h , 0.1, 1000);
+camera.position.y = 5;
+camera.rotation.x = math.pi / 2;
+camera.rotation.y = -math.pi;
+// camera.up = new THREE.Vector3(0, 0, 1); // Z is the up direction
+
 var light = new THREE.PointLight(0xffffff, 1, 0);
 light.position.set(5, 5, 5);
 scene.add(light);
-
+// another more light source
 light = new THREE.AmbientLight(0x606060); // soft white light
 scene.add(light);
 
@@ -31,31 +39,61 @@ loader.load(textureUrl, function (texture) {
 	var material = new THREE.MeshPhongMaterial({ map: texture });
 	earthMesh = new THREE.Mesh(geometry, material);
 	scene.add(earthMesh);
+	lattitudeEl.dispatchEvent(new Event('input'));
 });
 
-camera.position.z = 5;
+var cylinderMesh = new THREE.Mesh(
+	new THREE.CylinderGeometry(0.05, 0.05, 0.2, 32),
+	new THREE.MeshPhongMaterial({color: 0xffff00})
+);
+cylinderMesh.position.y = 2.3;
+cylinderMesh.position.z = 1.75;
+cylinderMesh.rotation.x = math.pi / 4;
+scene.add(cylinderMesh);
 
-// set up the canvas
-canvas.width = canvas.parentNode.clientWidth;
-canvas.height = canvas.parentNode.clientHeight;
-var ctx = canvas.getContext("2d");
 
-ctx.translate(500, 250);
-ctx.lineWidth = 0.1;
+var ctx;
+function setUpCanvas() {
+	canvas.width = canvas.parentNode.clientWidth;
+	canvas.height = canvas.parentNode.clientHeight;
+	ctx = canvas.getContext("2d");
+	ctx.lineWidth = 0.05;
+	ctx.translate(canvas.width / 2, canvas.height / 2);
+}
+setUpCanvas();
+window.addEventListener("resize", setUpCanvas);
+
 
 // set up the simulation data
 var t = 0.0;
-var lattitude = document.querySelector("#lattitude").value;
-document.querySelector("#lattitude").addEventListener("input", function () {
-	lattitude = this.value;
+// so here are the bindings,
+// because we're too lazy to use Angular
+var lattitude;
+lattitudeEl.addEventListener("input", function () {
+	lattitude = +this.value;
+	this.closest("tr").querySelector("span").innerHTML = lattitude;
 	if (earthMesh != null)
-		earthMesh.rotation.x = math.unit(lattitude - 90, 'deg').toNumber('rad');
+		earthMesh.rotation.x = -math.unit(lattitude - 120, 'deg').toNumber('rad');
 });
+lattitudeEl.dispatchEvent(new Event('input'));
+
+var c1;
+c1El.addEventListener("input", function () {
+	c1 = +this.value;
+	this.closest("tr").querySelector("span").innerHTML = c1;
+});
+c1El.dispatchEvent(new Event('input'));
+var c2;
+c2El.addEventListener("input", function () {
+	c2 = +this.value;
+	this.closest("tr").querySelector("span").innerHTML = c2;
+});
+c2El.dispatchEvent(new Event('input'));
 
 function render() {
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
-	var p = calc(t, 200, 200, math.unit(lattitude, 'deg'), 10, 0.1);
+	var p = calc(t, c1, c2, math.unit(lattitude, 'deg'), 10, 0.1);
 	ctx.strokeStyle = timeToColor(Math.ceil(t));
 	ctx.lineTo(p.re, p.im);
 	ctx.stroke();
