@@ -101,9 +101,12 @@ function render() {
 	ctx.strokeStyle = timeToColor(Math.ceil(t));
 	ctx.lineTo(p.re, p.im);
 	ctx.stroke();
-	t += 0.01;
 }
 render();
+
+setInterval(function () {
+	t += 0.03;
+}, 100);
 
 function calc(t, c1, c2, phi, w, om) {
 	// https://www.wikiwand.com/en/Foucault_pendulum#/Precession_as_a_form_of_parallel_transport
