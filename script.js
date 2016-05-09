@@ -2,9 +2,6 @@
 var earthContainer = document.querySelector("#earth-container");
 var w = earthContainer.clientWidth, h = earthContainer.clientHeight;
 var canvas = document.querySelector(".graph canvas");
-var lattitudeEl = document.querySelector("#lattitude");
-var c1El = document.querySelector("#c1");
-var c2El = document.querySelector("#c2");
 
 // set up the 3D scene
 
@@ -42,7 +39,7 @@ loader.load(textureUrl, function (texture) {
 	earthMesh = new THREE.Mesh(geometry, material);
 	earthMesh.receiveShadow = true;
 	scene.add(earthMesh);
-	lattitudeEl.dispatchEvent(new Event('input'));
+	document.getElementById("lattitude").dispatchEvent(new Event('input'));
 });
 
 var cylinderMesh = new THREE.Mesh(
@@ -70,34 +67,29 @@ window.addEventListener("resize", function () {
 
 // set up the simulation data
 var t = 0.0;
+// lattitude is a bit special
+document.getElementById("lattitude").addEventListener("input", function () {
+	if (earthMesh == null) return;
+	earthMesh.rotation.x = -math.unit(this.value - 130, 'deg').toNumber('rad');
+});
 // so here are the bindings,
 // because we're too lazy to use Angular
-var lattitude;
-lattitudeEl.addEventListener("input", function () {
-	lattitude = +this.value;
-	this.closest("tr").querySelector("span").innerHTML = lattitude;
-	if (earthMesh != null)
-		earthMesh.rotation.x = -math.unit(lattitude - 130, 'deg').toNumber('rad');
+var params = {};
+["lattitude", "c1", "c2", "w_om"].forEach(function (v) {
+	params[v] = 0;
+	var el = document.getElementById(v);
+	el.addEventListener("input", function () {
+		params[v] = +this.value;
+		this.closest("tr").querySelector("span").innerHTML = this.value;
+	});
+	el.dispatchEvent(new Event("input"));
 });
-lattitudeEl.dispatchEvent(new Event('input'));
-
-var c1;
-c1El.addEventListener("input", function () {
-	c1 = +this.value;
-	this.closest("tr").querySelector("span").innerHTML = c1;
-});
-c1El.dispatchEvent(new Event('input'));
-var c2;
-c2El.addEventListener("input", function () {
-	c2 = +this.value;
-	this.closest("tr").querySelector("span").innerHTML = c2;
-});
-c2El.dispatchEvent(new Event('input'));
 
 function render() {
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
-	var p = calc(t, c1, c2, math.unit(lattitude, 'deg'), 10, 0.1);
+	var p = calc(t, params.c1, params.c2, math.unit(params.lattitude, 'deg'),
+		params.w_om * 0.1, 0.1);
 	ctx.strokeStyle = "rgb(150, 150, 150)";
 	ctx.lineTo(p.re, p.im);
 	ctx.stroke();
