@@ -13,11 +13,11 @@ renderer.setSize(w, h);
 renderer.shadowMap.enabled = true;
 earthContainer.appendChild(renderer.domElement);
 
-var camera = new THREE.PerspectiveCamera(75,  w/h , 0.1, 1000);
+var camera = new THREE.PerspectiveCamera(70,  w/h , 0.1, 1000);
 camera.position.y = 5;
+camera.position.z = 0.5;
 camera.rotation.x = math.pi / 2;
 camera.rotation.y = -math.pi;
-// camera.up = new THREE.Vector3(0, 0, 1); // Z is the up direction
 
 var light = new THREE.PointLight(0xffffff, 1, 0);
 light.position.set(5, 5, 5);
@@ -28,16 +28,28 @@ light = new THREE.AmbientLight(0x606060); // soft white light
 scene.add(light);
 
 var geometry = new THREE.SphereGeometry(2.75, 64, 64);
-var earthMesh = null;
-var textureUrl = "//raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/land_ocean_ice_cloud_2048.jpg";
+var material = new THREE.MeshPhongMaterial();
+var earthMesh = new THREE.Mesh(geometry, material);
+earthMesh.castShadow = true;
+earthMesh.receiveShadow = true;
+scene.add(earthMesh);
 var loader = new THREE.TextureLoader();
 loader.crossOrigin = '';
+var textureUrl = "//raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/land_ocean_ice_cloud_2048.jpg";
 loader.load(textureUrl, function (texture) {
-	var material = new THREE.MeshPhongMaterial({ map: texture });
-	earthMesh = new THREE.Mesh(geometry, material);
-	earthMesh.receiveShadow = true;
-	scene.add(earthMesh);
-	document.getElementById("lattitude").dispatchEvent(new Event('input'));
+	material.map = texture;
+	material.needsUpdate = true;
+});
+var textureUrl = "//2.bp.blogspot.com/-oeguWUXEM8o/UkbyhLmUg-I/AAAAAAAAK-E/kSm3sH_f9fk/s1600/elev_bump_4k.jpg";
+loader.load(textureUrl, function (texture) {
+	material.bumpMap = texture;
+	material.bumpScale = 0.05;
+	material.needsUpdate = true;
+});
+var textureUrl = "//1.bp.blogspot.com/-596lbFumbyA/Ukb1cHw21_I/AAAAAAAAK-U/KArMZAjbvyU/s1600/water_4k.png";
+loader.load(textureUrl, function (texture) {
+	material.specularMap = texture;
+	material.needsUpdate = true;
 });
 
 var cylinderMesh = new THREE.Mesh(
@@ -48,12 +60,14 @@ cylinderMesh.position.y = 2;
 cylinderMesh.position.z = 2;
 cylinderMesh.rotation.x = math.pi / 4;
 cylinderMesh.castShadow = true;
+cylinderMesh.receiveShadow = true;
 
 var sphereMesh = new THREE.Mesh(
-	new THREE.SphereGeometry(0.03, 0.03, 32),
+	new THREE.SphereGeometry(0.01, 0.01, 32),
 	new THREE.MeshPhongMaterial({color: 0xff0000})
 );
 sphereMesh.castShadow = true;
+sphereMesh.receiveShadow = true;
 cylinderMesh.add(sphereMesh);
 
 scene.add(cylinderMesh);
