@@ -2,8 +2,6 @@
     box-sizing: border-box;
 }
 
-/*canvas { width: 100%; height: 100% }*/
-
 html {
     /* no freaking idea why I need this */
     height: 100%;
@@ -21,6 +19,22 @@ body {
 
 #earth-container {
     flex: 1 1 0;
+}
+
+.graph {
+    position: relative;
+}
+.graph canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.canv1 {
+    z-index: 0;
+}
+.canv2 {
+    z-index: 1;
 }
 
 .controls-container {

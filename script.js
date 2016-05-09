@@ -1,7 +1,8 @@
 // find DOM objects
 var earthContainer = document.querySelector("#earth-container");
 var w = earthContainer.clientWidth, h = earthContainer.clientHeight;
-var canvas = document.querySelector(".graph canvas");
+var canvas = document.querySelector(".graph canvas.canv1");
+var canvas2 = document.querySelector(".graph canvas.canv2");
 
 // set up the 3D scene
 
@@ -55,10 +56,16 @@ scene.add(cylinderMesh);
 
 canvas.width = canvas.parentNode.clientWidth;
 canvas.height = canvas.parentNode.clientHeight;
+canvas2.width = canvas.parentNode.clientWidth;
+canvas2.height = canvas.parentNode.clientHeight;
 var ctx = canvas.getContext("2d");
-ctx.lineWidth = 0.05;
+var ctx2 = canvas2.getContext("2d");
+ctx.lineWidth = 0.1;
+ctx2.fillStyle = "rgb(50, 50, 200)";
 ctx.translate(canvas.width / 2, canvas.height / 2);
-// We're to lazy to actually re-create everything by hands
+ctx2.translate(canvas.width / 2, canvas.height / 2);
+
+// We're too lazy to actually re-create everything by hands
 // And -- I freaking hate JS object model with all of this 'this' stuff
 window.addEventListener("resize", function () {
 	document.location.reload();
@@ -69,6 +76,8 @@ window.addEventListener("resize", function () {
 document.getElementById("lattitude").addEventListener("input", function () {
 	if (earthMesh == null) return;
 	earthMesh.rotation.x = -math.unit(this.value - 130, 'deg').toNumber('rad');
+	// we should *not* keep the already drawn path
+	clearPath();
 });
 // so here are the bindings,
 // because we're too lazy to use Angular
@@ -84,32 +93,30 @@ var params = {};
 });
 
 
-function clearCanvas() {
+function clearCanvas(context) {
 	// this should be built-in, really
 	// JavaScript, you are a horrible language
-	ctx.save();
-	ctx.setTransform(1, 0, 0, 1, 0, 0);
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.restore();
+	context.save();
+	context.setTransform(1, 0, 0, 1, 0, 0);
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.restore();
 }
 
 function render() {
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
-	clearCanvas();
-	ctx.strokeStyle = "rgb(150, 150, 150)";
-	ctx.beginPath();
-	var p;
-	var ms = Date.now() * 0.001;
-	for (var t = ms - 1; t <= ms; t += 0.01) {
-		p = calc(t, params.c1, params.c2, math.unit(params.lattitude, 'deg'),
-			params.w_om * 0.1, 0.1);
-		ctx.lineTo(p.re, p.im);
-		ctx.stroke();
-	}
-	ctx.beginPath();
-	ctx.arc(p.re, p.im, 5, 0, 2 * math.pi);
-	ctx.fill();
+	var t = Date.now() * 0.001;
+	var p = calc(t, params.c1, params.c2, math.unit(params.lattitude, 'deg'),
+		params.w_om * 0.03, 0.03);
+	// no idea why this breaks everything
+	// ctx.beginPath();
+	ctx.lineTo(p.re, p.im);
+	ctx.stroke();
+
+	clearCanvas(ctx2);
+	ctx2.beginPath();
+	ctx2.arc(p.re, p.im, 5, 0, 2 * math.pi);
+	ctx2.fill();
 }
 render();
 
@@ -134,3 +141,9 @@ function calc(t, c1, c2, phi, w, om) {
 		math.add(f(c1, w), f(c2, -w))
 	);
 }
+
+function clearPath() {
+	clearCanvas(ctx);
+	ctx.beginPath();
+}
+document.querySelector("button.clear").addEventListener("click", clearPath);
