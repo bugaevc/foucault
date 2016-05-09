@@ -77,7 +77,7 @@ lattitudeEl.addEventListener("input", function () {
 	lattitude = +this.value;
 	this.closest("tr").querySelector("span").innerHTML = lattitude;
 	if (earthMesh != null)
-		earthMesh.rotation.x = -math.unit(lattitude - 120, 'deg').toNumber('rad');
+		earthMesh.rotation.x = -math.unit(lattitude - 130, 'deg').toNumber('rad');
 });
 lattitudeEl.dispatchEvent(new Event('input'));
 
