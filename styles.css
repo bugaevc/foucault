@@ -44,11 +44,15 @@ body {
     text-align: right;
 }
 
+.controls td {
+    padding: 1em;
+}
+
 @media all and (min-width: 1000px) {
     body {
         flex-direction: row;
     }
     .controls-container {
-        flex-direction: column;
+        //flex-direction: column;
     }
 }
