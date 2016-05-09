@@ -56,16 +56,16 @@ cylinderMesh.castShadow = true;
 scene.add(cylinderMesh);
 
 
-var ctx;
-function setUpCanvas() {
-	canvas.width = canvas.parentNode.clientWidth;
-	canvas.height = canvas.parentNode.clientHeight;
-	ctx = canvas.getContext("2d");
-	ctx.lineWidth = 0.05;
-	ctx.translate(canvas.width / 2, canvas.height / 2);
-}
-setUpCanvas();
-window.addEventListener("resize", setUpCanvas);
+canvas.width = canvas.parentNode.clientWidth;
+canvas.height = canvas.parentNode.clientHeight;
+var ctx = canvas.getContext("2d");
+ctx.lineWidth = 0.05;
+ctx.translate(canvas.width / 2, canvas.height / 2);
+// We're to lazy to actually re-create everything by hands
+// And -- I freaking hate JS object model with all of this 'this' stuff
+window.addEventListener("resize", function () {
+	document.location.reload();
+});
 
 
 // set up the simulation data
