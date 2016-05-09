@@ -12,6 +12,7 @@ var scene = new THREE.Scene();
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(w, h);
+renderer.shadowMap.enabled = true;
 earthContainer.appendChild(renderer.domElement);
 
 var camera = new THREE.PerspectiveCamera(75,  w/h , 0.1, 1000);
@@ -22,6 +23,7 @@ camera.rotation.y = -math.pi;
 
 var light = new THREE.PointLight(0xffffff, 1, 0);
 light.position.set(5, 5, 5);
+light.castShadow = true;
 scene.add(light);
 // another more light source
 light = new THREE.AmbientLight(0x606060); // soft white light
@@ -38,6 +40,7 @@ loader.crossOrigin = '';
 loader.load(textureUrl, function (texture) {
 	var material = new THREE.MeshPhongMaterial({ map: texture });
 	earthMesh = new THREE.Mesh(geometry, material);
+	earthMesh.receiveShadow = true;
 	scene.add(earthMesh);
 	lattitudeEl.dispatchEvent(new Event('input'));
 });
@@ -46,9 +49,10 @@ var cylinderMesh = new THREE.Mesh(
 	new THREE.CylinderGeometry(0.05, 0.05, 0.2, 32),
 	new THREE.MeshPhongMaterial({color: 0xffff00})
 );
-cylinderMesh.position.y = 2.3;
-cylinderMesh.position.z = 1.75;
+cylinderMesh.position.y = 2;
+cylinderMesh.position.z = 2;
 cylinderMesh.rotation.x = math.pi / 4;
+cylinderMesh.castShadow = true;
 scene.add(cylinderMesh);
 
 
