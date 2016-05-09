@@ -65,8 +65,6 @@ window.addEventListener("resize", function () {
 });
 
 
-// set up the simulation data
-var t = 0.0;
 // lattitude is a bit special
 document.getElementById("lattitude").addEventListener("input", function () {
 	if (earthMesh == null) return;
@@ -85,20 +83,35 @@ var params = {};
 	el.dispatchEvent(new Event("input"));
 });
 
+
+function clearCanvas() {
+	// this should be built-in, really
+	// JavaScript, you are a horrible language
+	ctx.save();
+	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.restore();
+}
+
 function render() {
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
-	var p = calc(t, params.c1, params.c2, math.unit(params.lattitude, 'deg'),
-		params.w_om * 0.1, 0.1);
+	clearCanvas();
 	ctx.strokeStyle = "rgb(150, 150, 150)";
-	ctx.lineTo(p.re, p.im);
-	ctx.stroke();
+	ctx.beginPath();
+	var p;
+	var ms = Date.now() * 0.001;
+	for (var t = ms - 1; t <= ms; t += 0.01) {
+		p = calc(t, params.c1, params.c2, math.unit(params.lattitude, 'deg'),
+			params.w_om * 0.1, 0.1);
+		ctx.lineTo(p.re, p.im);
+		ctx.stroke();
+	}
+	ctx.beginPath();
+	ctx.arc(p.re, p.im, 5, 0, 2 * math.pi);
+	ctx.fill();
 }
 render();
-
-setInterval(function () {
-	t += 0.03;
-}, 100);
 
 function calc(t, c1, c2, phi, w, om) {
 	// https://www.wikiwand.com/en/Foucault_pendulum#/Precession_as_a_form_of_parallel_transport
