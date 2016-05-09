@@ -98,7 +98,7 @@ function render() {
 	requestAnimationFrame(render);
 	renderer.render(scene, camera);
 	var p = calc(t, c1, c2, math.unit(lattitude, 'deg'), 10, 0.1);
-	ctx.strokeStyle = timeToColor(Math.ceil(t));
+	ctx.strokeStyle = "rgb(150, 150, 150)";
 	ctx.lineTo(p.re, p.im);
 	ctx.stroke();
 }
@@ -128,8 +128,4 @@ function calc(t, c1, c2, phi, w, om) {
 	return math.multiply(k,
 		math.add(f(c1, w), f(c2, -w))
 	);
-}
-
-function timeToColor(t) {
-	return "rgb(" + t*10 + ", 0, 0)";
 }
