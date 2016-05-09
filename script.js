@@ -28,9 +28,6 @@ light = new THREE.AmbientLight(0x606060); // soft white light
 scene.add(light);
 
 var geometry = new THREE.SphereGeometry(2.75, 64, 64);
-
-// load the Earth texture
-
 var earthMesh = null;
 var textureUrl = "//raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/land_ocean_ice_cloud_2048.jpg";
 var loader = new THREE.TextureLoader();
@@ -44,13 +41,21 @@ loader.load(textureUrl, function (texture) {
 });
 
 var cylinderMesh = new THREE.Mesh(
-	new THREE.CylinderGeometry(0.05, 0.05, 0.2, 32),
+	new THREE.CylinderGeometry(0.01, 0.01, 0.2, 32),
 	new THREE.MeshPhongMaterial({color: 0xffff00})
 );
 cylinderMesh.position.y = 2;
 cylinderMesh.position.z = 2;
 cylinderMesh.rotation.x = math.pi / 4;
 cylinderMesh.castShadow = true;
+
+var sphereMesh = new THREE.Mesh(
+	new THREE.SphereGeometry(0.03, 0.03, 32),
+	new THREE.MeshPhongMaterial({color: 0xff0000})
+);
+sphereMesh.castShadow = true;
+cylinderMesh.add(sphereMesh);
+
 scene.add(cylinderMesh);
 
 
@@ -61,7 +66,7 @@ canvas2.height = canvas.parentNode.clientHeight;
 var ctx = canvas.getContext("2d");
 var ctx2 = canvas2.getContext("2d");
 ctx.lineWidth = 0.1;
-ctx2.fillStyle = "rgb(50, 50, 200)";
+ctx2.fillStyle = "#ff0000";
 ctx.translate(canvas.width / 2, canvas.height / 2);
 ctx2.translate(canvas.width / 2, canvas.height / 2);
 
@@ -104,7 +109,6 @@ function clearCanvas(context) {
 
 function render() {
 	requestAnimationFrame(render);
-	renderer.render(scene, camera);
 	var t = Date.now() * 0.001;
 	var p = calc(t, params.c1, params.c2, math.unit(params.lattitude, 'deg'),
 		params.w_om * 0.03, 0.03);
@@ -117,6 +121,10 @@ function render() {
 	ctx2.beginPath();
 	ctx2.arc(p.re, p.im, 5, 0, 2 * math.pi);
 	ctx2.fill();
+
+	sphereMesh.position.x = -p.re / 1000;
+	sphereMesh.position.z = -p.im / 1000;
+	renderer.render(scene, camera);
 }
 render();
 
