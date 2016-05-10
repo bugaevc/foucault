@@ -93,7 +93,6 @@ window.addEventListener("resize", function () {
 
 // lattitude is a bit special
 document.getElementById("lattitude").addEventListener("input", function () {
-	if (earthMesh == null) return;
 	earthMesh.rotation.x = -math.unit(this.value - 130, 'deg').toNumber('rad');
 	// we should *not* keep the already drawn path
 	clearPath();
