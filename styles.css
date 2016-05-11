@@ -66,4 +66,7 @@ body {
     body {
         flex-direction: row;
     }
+    .controls-container {
+        flex-direction: column;
+    }
 }
