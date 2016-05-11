@@ -45,7 +45,7 @@ body {
 }
 
 .controls-container .graph {
-    flex: 1 1 0;
+    flex: 2 1 0;
     border: 1px solid grey;
 }
 .controls-container .controls {
