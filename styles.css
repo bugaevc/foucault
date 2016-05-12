@@ -62,6 +62,10 @@ body {
     padding: 1em;
 }
 
+.controls input[type="range"] {
+    width: 400px;
+}
+
 @media all and (min-width: 1000px) {
     body {
         flex-direction: row;

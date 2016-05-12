@@ -35,18 +35,18 @@ earthMesh.receiveShadow = true;
 scene.add(earthMesh);
 var loader = new THREE.TextureLoader();
 loader.crossOrigin = '';
-var textureUrl = "//raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/land_ocean_ice_cloud_2048.jpg";
+var textureUrl = "http://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/land_ocean_ice_cloud_2048.jpg";
 loader.load(textureUrl, function (texture) {
 	material.map = texture;
 	material.needsUpdate = true;
 });
-var textureUrl = "//2.bp.blogspot.com/-oeguWUXEM8o/UkbyhLmUg-I/AAAAAAAAK-E/kSm3sH_f9fk/s1600/elev_bump_4k.jpg";
+var textureUrl = "http://2.bp.blogspot.com/-oeguWUXEM8o/UkbyhLmUg-I/AAAAAAAAK-E/kSm3sH_f9fk/s1600/elev_bump_4k.jpg";
 loader.load(textureUrl, function (texture) {
 	material.bumpMap = texture;
 	material.bumpScale = 0.05;
 	material.needsUpdate = true;
 });
-var textureUrl = "//1.bp.blogspot.com/-596lbFumbyA/Ukb1cHw21_I/AAAAAAAAK-U/KArMZAjbvyU/s1600/water_4k.png";
+var textureUrl = "http://1.bp.blogspot.com/-596lbFumbyA/Ukb1cHw21_I/AAAAAAAAK-U/KArMZAjbvyU/s1600/water_4k.png";
 loader.load(textureUrl, function (texture) {
 	material.specularMap = texture;
 	material.needsUpdate = true;
